@@ -54,6 +54,7 @@
         Company:
         <!-- [OPTIONAL - NON ASSESSED] Activity 2a: Get the company name from the bookstores object. -->
         <!-- TODO: CODE TO GET COMPANY NAME HERE -->
+         <p>activity 2a</p>
       </p>
 
       <p>
