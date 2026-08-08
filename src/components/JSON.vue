@@ -42,7 +42,11 @@
       <h3>Nested Arrays/Objects</h3>
       <p>{{ austen?.name }}'s works:</p>
       <!-- [OPTIONAL - NON ASSESSED] Activity 1: Render a list of Austen's works. Hint: Use the v-for directive to iterate through the array of authors that you have filtered out. -->
-      <!-- TODO: CODE TO RENDER LIST OF AUSTEN'S WORKS HERE -->
+      <ul>
+        <li v-for="work in austen?.famousWorks" :key="work.title">
+          {{ work.title }} ({{ work.year }})
+        </li>
+      </ul>
     </section>
 
     <section class="lab-section">
@@ -53,8 +57,7 @@
       <p>
         Company:
         <!-- [OPTIONAL - NON ASSESSED] Activity 2a: Get the company name from the bookstores object. -->
-        <!-- TODO: CODE TO GET COMPANY NAME HERE -->
-         <p>activity 2a</p>
+        {{ bookstores.name }}
       </p>
 
       <p>
@@ -96,7 +99,18 @@
       <!-- [OPTIONAL - NON ASSESSED] Activity 6: Attribute, Class and Style Bindings -->
       <h2>Attribute, Class and Style Binding with <code>v-bind</code></h2>
       <p>Highlighting Specific Authors:</p>
-
+      <ul>
+        <li
+          v-for="author in authors"
+          :key="author.id"
+          :class="{ highlight: author.birthYear > 1850 }"
+          :style="{ fontWeight: author.birthYear > 1850 ? 'bold' : 'normal' }"
+          :title="`${author.name} writes ${author.genres.join(' & ')}`"
+        >
+          {{ author.name }} ({{ author.birthYear }})
+        </li>
+      </ul>
+      <p>Authors born after 1850 are highlighted. Hover a name to see its genres.</p>
     </section>
   </div>
 </template>
@@ -117,9 +131,18 @@ const modernAuthors = computed(() =>
 );
 
 // Activity 2.2: Get all famous works
-const allFamousWorks = computed(() => 
+const allFamousWorks = computed(() =>
   // TODO: CODE TO GET ALL FAMOUS WORKS HERE
   authors.flatMap((author) => author.famousWorks.map((work) => work.title))
+);
+
+// Activity 2.3: Find a single author by property
+const orwell = computed(() =>
+  authors.find((author) => author.name === "George Orwell")
+);
+
+const austen = computed(() =>
+  authors.find((author) => author.name === "Jane Austen")
 );
 
 </script>
