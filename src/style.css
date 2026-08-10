@@ -52,6 +52,9 @@
 
 body {
   margin: 0;
+  font-size: 18px;
+  color: #333;
+  font-family: Arial, sans-serif;
 }
 
 h1,
