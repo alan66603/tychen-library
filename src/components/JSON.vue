@@ -150,6 +150,9 @@ const austen = computed(() =>
 <style scoped>
 .json-lab {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  /* Card backgrounds below are hard-coded light, so pin the text colour
+     instead of inheriting body's theme-aware var(--text). */
+  color: #333;
   max-width: 80vw;
   margin: 0 auto;
   padding: 20px;
