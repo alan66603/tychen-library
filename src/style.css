@@ -57,6 +57,26 @@ body {
   font-family: Arial, sans-serif;
 }
 
+/* Class selectors */
+.form {
+    text-align: center;
+    margin-top: 50px;
+}
+
+/* ID selectors */
+#username:focus,
+#password:focus,
+#isAustralian:focus,
+#reason:focus {
+    border-color: #FF6347; /* More obvious border color change (Tomato) */
+    background-color: #FFEBE8; /* Light background color change */
+}
+
+/* Attribute selectors */
+select[id="gender"] {
+    background-color: #d3d3d3; /* Default background color set to gray */
+}
+
 h1,
 h2 {
   font-family: var(--heading);
@@ -64,10 +84,13 @@ h2 {
   color: var(--text-h);
 }
 
+/* Tag selectors */
 h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
-  margin: 32px 0;
+  margin: 20px 0 32px;
+  text-align: center;
+  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
   @media (max-width: 1024px) {
     font-size: 36px;
     margin: 20px 0;
