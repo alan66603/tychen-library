@@ -18,7 +18,12 @@ const submittedCards = ref([])
 const submitForm = () => {
   validateName(true)
   validatePassword(true)
-  if (!errors.value.username && !errors.value.password) {
+  validateConfirmPassword(true)
+  validateGender(true)
+  validateReason(true)
+
+  const hasError = Object.values(errors.value).some((message) => message !== null)
+  if (!hasError) {
     submittedCards.value.push({ ...formData.value })
     clearForm()
   }
@@ -46,8 +51,14 @@ const errors = ref({
 })
 
 const validateName = (blur) => {
-  if (formData.value.username.length < 3) {
+  const username = formData.value.username
+
+  if (username.length < 3) {
     if (blur) errors.value.username = 'Name must be at least 3 characters'
+  } else if (!/^[A-Za-z0-9_]+$/.test(username)) {
+    // Extra validation: usernames are used in URLs, so keep them to
+    // letters, digits and underscores.
+    if (blur) errors.value.username = 'Username may only contain letters, numbers and underscores.'
   } else {
     errors.value.username = null
   }
@@ -85,6 +96,37 @@ const validateConfirmPassword = (blur) => {
     if (blur) errors.value.confirmPassword = 'Passwords do not match.'
   } else {
     errors.value.confirmPassword = null
+  }
+}
+
+/**
+ * Extra validation: a gender has to be chosen. This replaces the HTML
+ * `required` attribute, so the message can be written and styled by us
+ * instead of the browser.
+ */
+const validateGender = (blur) => {
+  if (!formData.value.gender) {
+    if (blur) errors.value.gender = 'Please select a gender.'
+  } else {
+    errors.value.gender = null
+  }
+}
+
+/**
+ * Extra validation: the reason for joining has to be filled in, and long
+ * enough to actually say something.
+ * @param blur: boolean - If true, show the error message.
+ */
+const validateReason = (blur) => {
+  const reason = formData.value.reason.trim()
+  const minLength = 10
+
+  if (reason.length === 0) {
+    if (blur) errors.value.reason = 'Please tell us why you are joining.'
+  } else if (reason.length < minLength) {
+    if (blur) errors.value.reason = `Please use at least ${minLength} characters.`
+  } else {
+    errors.value.reason = null
   }
 }
 
@@ -160,11 +202,19 @@ const reasonMessage = computed(() =>
             </div>
             <div class="col-md-6 col-sm-6">
               <label for="gender" class="form-label">Gender</label>
-              <select class="form-select" id="gender" v-model="formData.gender" required>
+              <select
+                class="form-select"
+                id="gender"
+                @blur="() => validateGender(true)"
+                @change="() => validateGender(false)"
+                v-model="formData.gender"
+              >
+                <option value="" disabled>Choose...</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
+              <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
             </div>
           </div>
           <div class="mb-3">
@@ -174,7 +224,10 @@ const reasonMessage = computed(() =>
               id="reason"
               rows="3"
               v-model="formData.reason"
+              @blur="() => validateReason(true)"
+              @input="() => validateReason(false)"
             ></textarea>
+            <div v-if="errors.reason" class="text-danger">{{ errors.reason }}</div>
             <div v-if="reasonMessage" class="text-success">{{ reasonMessage }}</div>
           </div>
           <!-- v-bind is one-way: typing here does not update formData.suburb -->
