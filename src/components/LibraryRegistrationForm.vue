@@ -16,7 +16,11 @@ const submittedCards = ref([])
 const submitForm = () => {
   validateName(true)
   validatePassword(true)
-  if (!errors.value.username && !errors.value.password) {
+  validateGender(true)
+  validateReason(true)
+
+  const hasError = Object.values(errors.value).some((message) => message !== null)
+  if (!hasError) {
     submittedCards.value.push({ ...formData.value })
     clearForm()
   }
@@ -41,8 +45,14 @@ const errors = ref({
 })
 
 const validateName = (blur) => {
-  if (formData.value.username.length < 3) {
+  const username = formData.value.username
+
+  if (username.length < 3) {
     if (blur) errors.value.username = 'Name must be at least 3 characters'
+  } else if (!/^[A-Za-z0-9_]+$/.test(username)) {
+    // Extra validation: usernames appear in URLs, so keep them to
+    // letters, digits and underscores.
+    if (blur) errors.value.username = 'Username may only contain letters, numbers and underscores.'
   } else {
     errors.value.username = null
   }
@@ -68,6 +78,36 @@ const validatePassword = (blur) => {
     if (blur) errors.value.password = 'Password must contain at least one special character.'
   } else {
     errors.value.password = null
+  }
+}
+
+/**
+ * Extra validation: a gender has to be chosen. This replaces the HTML
+ * `required` attribute removed in Activity 3.1, so the message can be
+ * written and styled by us instead of the browser.
+ */
+const validateGender = (blur) => {
+  if (!formData.value.gender) {
+    if (blur) errors.value.gender = 'Please select a gender.'
+  } else {
+    errors.value.gender = null
+  }
+}
+
+/**
+ * Extra validation: the reason for joining is required, and long enough
+ * to actually say something.
+ */
+const validateReason = (blur) => {
+  const reason = formData.value.reason.trim()
+  const minLength = 10
+
+  if (reason.length === 0) {
+    if (blur) errors.value.reason = 'Please tell us why you are joining.'
+  } else if (reason.length < minLength) {
+    if (blur) errors.value.reason = `Please use at least ${minLength} characters.`
+  } else {
+    errors.value.reason = null
   }
 }
 </script>
@@ -124,11 +164,19 @@ const validatePassword = (blur) => {
             </div>
             <div class="col-md-6 col-sm-6">
               <label for="gender" class="form-label">Gender</label>
-              <select class="form-select" id="gender" v-model="formData.gender" required>
+              <select
+                class="form-select"
+                id="gender"
+                @blur="() => validateGender(true)"
+                @change="() => validateGender(false)"
+                v-model="formData.gender"
+              >
+                <option value="" disabled>Choose...</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
+              <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
             </div>
           </div>
           <div class="mb-3">
@@ -137,8 +185,11 @@ const validatePassword = (blur) => {
               class="form-control"
               id="reason"
               rows="3"
+              @blur="() => validateReason(true)"
+              @input="() => validateReason(false)"
               v-model="formData.reason"
             ></textarea>
+            <div v-if="errors.reason" class="text-danger">{{ errors.reason }}</div>
           </div>
           <div class="text-center">
             <button type="submit" class="btn btn-primary me-2">Submit</button>
