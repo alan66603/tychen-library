@@ -7,7 +7,6 @@ import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura'
 import router from './router'
 
-// Initialise Firebase (see src/firebase.js for the config).
 import './firebase/init'
 
 const app = createApp(App)
