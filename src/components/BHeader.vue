@@ -24,6 +24,16 @@ const handleLogout = () => {
         <li class="nav-item">
           <router-link to="/about" class="nav-link" active-class="active">About</router-link>
         </li>
+        <li class="nav-item">
+          <router-link to="/FireRegister" class="nav-link" active-class="active"
+            >FireRegister</router-link
+          >
+        </li>
+        <li class="nav-item">
+          <router-link to="/FireLogin" class="nav-link" active-class="active"
+            >FireLogin</router-link
+          >
+        </li>
 
         <!-- Members only: log in when signed out, log out when signed in. -->
         <li v-if="isAuthenticated" class="nav-item d-flex align-items-center">
