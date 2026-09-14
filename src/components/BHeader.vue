@@ -1,14 +1,5 @@
 <script setup>
-import { useRouter } from 'vue-router'
-import { isAuthenticated, currentUser, logout } from '../auth'
-import { firebaseUser, firebaseRole, isFirebaseAuthenticated } from '../firebaseAuth'
-
-const router = useRouter()
-
-const handleLogout = () => {
-  logout()
-  router.push('/login')
-}
+import { currentUser, currentRole, isAuthenticated } from '../auth'
 </script>
 
 <template>
@@ -28,42 +19,27 @@ const handleLogout = () => {
 
         <!-- Firebase auth: register / sign in when signed out, show the
              user's email and role plus a log out link when signed in. -->
-        <template v-if="isFirebaseAuthenticated">
+        <template v-if="isAuthenticated">
           <li class="nav-item d-flex align-items-center">
             <span class="nav-link text-muted">
-              {{ firebaseUser.email }}
-              <span class="badge" :class="firebaseRole === 'admin' ? 'text-bg-danger' : 'text-bg-secondary'">
-                {{ firebaseRole }}
+              {{ currentUser.email }}
+              <span class="badge" :class="currentRole === 'admin' ? 'text-bg-danger' : 'text-bg-secondary'">
+                {{ currentRole }}
               </span>
             </span>
           </li>
           <li class="nav-item">
-            <router-link to="/FireLogout" class="nav-link" active-class="active">FireLogout</router-link>
+            <router-link to="/logout" class="nav-link" active-class="active">Log out</router-link>
           </li>
         </template>
         <template v-else>
           <li class="nav-item">
-            <router-link to="/FireRegister" class="nav-link" active-class="active"
-              >FireRegister</router-link
-            >
+            <router-link to="/register" class="nav-link" active-class="active">Register</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/FireLogin" class="nav-link" active-class="active"
-              >FireLogin</router-link
-            >
+            <router-link to="/signin" class="nav-link" active-class="active">Sign in</router-link>
           </li>
         </template>
-
-        <!-- Members only: log in when signed out, log out when signed in. -->
-        <li v-if="isAuthenticated" class="nav-item d-flex align-items-center">
-          <span class="nav-link text-muted">Signed in as {{ currentUser }}</span>
-          <button type="button" class="btn btn-outline-secondary btn-sm" @click="handleLogout">
-            Log out
-          </button>
-        </li>
-        <li v-else class="nav-item">
-          <router-link to="/login" class="nav-link" active-class="active">Login</router-link>
-        </li>
       </ul>
     </header>
   </div>

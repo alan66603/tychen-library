@@ -15,9 +15,11 @@ const route = useRoute()
           </span>
           <span v-else>That page is for members only.</span>
         </p>
-        <p>Please log in to continue.</p>
+        <p>Please sign in to continue.</p>
 
-        <router-link to="/login" class="btn btn-primary me-2">Go to login</router-link>
+        <router-link :to="{ path: '/signin', query: route.query }" class="btn btn-primary me-2"
+          >Go to sign in</router-link
+        >
         <router-link to="/" class="btn btn-secondary">Back to home</router-link>
       </div>
     </div>
