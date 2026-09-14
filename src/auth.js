@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
-import { auth } from './firebase'
+import { auth } from './firebase/init'
 
 // Roles are derived from the email address for this exercise: any account
 // whose local part starts with "admin" is an admin, everyone else is a user.

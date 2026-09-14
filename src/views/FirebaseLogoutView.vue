@@ -9,7 +9,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { auth } from '../firebase'
+import { auth } from '../firebase/init'
 import { currentUser, currentRole, isAuthenticated, logout } from '../auth'
 
 const router = useRouter()

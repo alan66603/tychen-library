@@ -9,7 +9,7 @@
 import { ref } from 'vue'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useRouter, useRoute } from 'vue-router'
-import { auth } from '../firebase'
+import { auth } from '../firebase/init'
 import { getRole } from '../auth'
 
 const email = ref('')
