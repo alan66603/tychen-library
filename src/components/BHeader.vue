@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { isAuthenticated, currentUser, logout } from '../auth'
+import { firebaseUser, firebaseRole, isFirebaseAuthenticated } from '../firebaseAuth'
 
 const router = useRouter()
 
@@ -24,16 +25,34 @@ const handleLogout = () => {
         <li class="nav-item">
           <router-link to="/about" class="nav-link" active-class="active">About</router-link>
         </li>
-        <li class="nav-item">
-          <router-link to="/FireRegister" class="nav-link" active-class="active"
-            >FireRegister</router-link
-          >
-        </li>
-        <li class="nav-item">
-          <router-link to="/FireLogin" class="nav-link" active-class="active"
-            >FireLogin</router-link
-          >
-        </li>
+
+        <!-- Firebase auth: register / sign in when signed out, show the
+             user's email and role plus a log out link when signed in. -->
+        <template v-if="isFirebaseAuthenticated">
+          <li class="nav-item d-flex align-items-center">
+            <span class="nav-link text-muted">
+              {{ firebaseUser.email }}
+              <span class="badge" :class="firebaseRole === 'admin' ? 'text-bg-danger' : 'text-bg-secondary'">
+                {{ firebaseRole }}
+              </span>
+            </span>
+          </li>
+          <li class="nav-item">
+            <router-link to="/FireLogout" class="nav-link" active-class="active">FireLogout</router-link>
+          </li>
+        </template>
+        <template v-else>
+          <li class="nav-item">
+            <router-link to="/FireRegister" class="nav-link" active-class="active"
+              >FireRegister</router-link
+            >
+          </li>
+          <li class="nav-item">
+            <router-link to="/FireLogin" class="nav-link" active-class="active"
+              >FireLogin</router-link
+            >
+          </li>
+        </template>
 
         <!-- Members only: log in when signed out, log out when signed in. -->
         <li v-if="isAuthenticated" class="nav-item d-flex align-items-center">
