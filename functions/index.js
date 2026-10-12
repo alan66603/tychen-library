@@ -21,6 +21,20 @@ exports.countBooks = onRequest((req, res) => {
   })
 })
 
+// HTTP function: returns every book as JSON.
+exports.getAllBooks = onRequest((req, res) => {
+  cors(req, res, async () => {
+    try {
+      const snapshot = await db.collection('books').get()
+      const books = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+      res.status(200).send(books)
+    } catch (error) {
+      logger.error('Error fetching books', error)
+      res.status(500).send('Error fetching books')
+    }
+  })
+})
+
 // Firestore trigger: whenever a book is added or edited, capitalise all of
 // its string fields. Writing the capitalised values back triggers this
 // function again, so it stops when nothing is left to change.
