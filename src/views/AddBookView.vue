@@ -12,7 +12,7 @@
             </div>
             <button type="submit">Add Book</button>
         </form>
-        <BookList ref="bookList" />
+        <BookList />
     </div>
 </template>
 
@@ -24,7 +24,6 @@ import BookList from '../components/BookList.vue'
 
 const isbn = ref('')
 const name = ref('')
-const bookList = ref(null)
 
 const addBook = async () => {
     try {
@@ -45,8 +44,6 @@ const addBook = async () => {
         isbn.value = ''
         name.value = ''
         alert('Book added successfully!')
-        // Refresh the list so the new book shows up straight away.
-        bookList.value.fetchBooks()
     } catch (error) {
         console.error('Error adding book: ', error)
     }

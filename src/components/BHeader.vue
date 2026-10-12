@@ -19,6 +19,9 @@ import { currentUser, currentRole, isAuthenticated } from '../auth'
         <li class="nav-item">
           <router-link to="/addbook" class="nav-link" active-class="active">Add Book</router-link>
         </li>
+        <li class="nav-item">
+          <router-link to="/GetBookCount" class="nav-link" active-class="active">Get Book Count</router-link>
+        </li>
 
         <!-- Firebase auth: register / sign in when signed out, show the
              user's email and role plus a log out link when signed in. -->

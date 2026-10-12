@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import db from '../firebase/init.js'
 import {
     collection,
@@ -46,7 +46,7 @@ import {
     where,
     orderBy,
     limit,
-    getDocs,
+    onSnapshot,
     doc,
     updateDoc,
     deleteDoc
@@ -62,28 +62,33 @@ const editingId = ref(null)
 const editIsbn = ref('')
 const editName = ref('')
 
-const fetchBooks = async () => {
-    try {
-        // where, orderBy and limit combined in one query. Firestore requires
-        // the first orderBy to be on the same field as a range filter (>),
-        // so ordering by isbn here needs no composite index. The comparison
-        // only matches documents where isbn is stored as a number, which is
-        // why AddBookView converts it before saving.
-        const q = query(
-            collection(db, 'books'),
-            where('isbn', '>', minIsbn.value),
-            orderBy('isbn', direction.value),
-            limit(maxResults.value)
-        )
-        const querySnapshot = await getDocs(q)
-        const booksArray = []
-        querySnapshot.forEach((doc) => {
-            booksArray.push({ id: doc.id, ...doc.data() })
-        })
-        books.value = booksArray
-    } catch (error) {
-        console.error('Error fetching books: ', error)
-    }
+let unsubscribe = null
+
+const fetchBooks = () => {
+    // where, orderBy and limit combined in one query. Firestore requires
+    // the first orderBy to be on the same field as a range filter (>),
+    // so ordering by isbn here needs no composite index. The comparison
+    // only matches documents where isbn is stored as a number, which is
+    // why AddBookView converts it before saving.
+    const q = query(
+        collection(db, 'books'),
+        where('isbn', '>', minIsbn.value),
+        orderBy('isbn', direction.value),
+        limit(maxResults.value)
+    )
+    // Listen instead of reading once, so the list updates by itself after
+    // adds, edits and deletes, and when the capitaliseBook Cloud Function
+    // rewrites a new book's name in capitals a moment later.
+    if (unsubscribe) unsubscribe()
+    unsubscribe = onSnapshot(
+        q,
+        (querySnapshot) => {
+            books.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+        },
+        (error) => {
+            console.error('Error fetching books: ', error)
+        }
+    )
 }
 
 const startEdit = (book) => {
@@ -110,7 +115,6 @@ const saveEdit = async (id) => {
         })
         editingId.value = null
         alert('Book updated successfully!')
-        fetchBooks()
     } catch (error) {
         console.error('Error updating book: ', error)
     }
@@ -121,7 +125,6 @@ const deleteBook = async (book) => {
     try {
         await deleteDoc(doc(db, 'books', book.id))
         alert('Book deleted successfully!')
-        fetchBooks()
     } catch (error) {
         console.error('Error deleting book: ', error)
     }
@@ -131,8 +134,9 @@ onMounted(() => {
     fetchBooks()
 })
 
-// Let the parent (AddBookView) refresh the list after adding a book.
-defineExpose({ fetchBooks })
+onUnmounted(() => {
+    if (unsubscribe) unsubscribe()
+})
 </script>
 
 <style scoped>
