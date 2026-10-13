@@ -45,9 +45,13 @@ const routes = [
     component: AddBookView
   },
   {
-    path: '/weather',
-    name: 'Weather',
+    path: '/WeatherCheck',
+    name: 'WeatherCheck',
     component: WeatherView
+  },
+  {
+    path: '/weather',
+    redirect: '/WeatherCheck'
   },
   {
     path: '/GetBookCount',
